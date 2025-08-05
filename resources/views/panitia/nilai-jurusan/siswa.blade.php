@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="card-body">
-                @if($kriteriaJurusan->isEmpty())
+                @if($masterKriteria->isEmpty())
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle"></i>
                         Belum ada kriteria penilaian yang aktif untuk jurusan ini. 
@@ -46,10 +46,10 @@
                     <div class="alert alert-info">
                         <h6><i class="fas fa-info-circle"></i> Kriteria Penilaian:</h6>
                         <div class="row">
-                            @foreach($kriteriaJurusan as $kj)
+                            @foreach($masterKriteria as $kriteria)
                                 <div class="col-md-4 mb-2">
-                                    <span class="badge badge-primary">{{ $kj->masterKriteria->nama_kriteria }}</span>
-                                    <small class="text-muted">({{ $kj->nilai_min }}-{{ $kj->nilai_max }})</small>
+                                    <span class="badge badge-primary">{{ $kriteria->nama_kriteria }}</span>
+                                    <small class="text-muted">({{ $kriteria->nilai_min }}-{{ $kriteria->nilai_max }})</small>
                                 </div>
                             @endforeach
                         </div>
@@ -95,8 +95,8 @@
                                                 </div>
                                             </div>
                                             <small class="text-muted">
-                                                {{ $s->nilaiSiswa->whereIn('master_kriteria_id', $kriteriaJurusan->pluck('master_kriteria_id'))->count() }} 
-                                                / {{ $kriteriaJurusan->count() }} kriteria
+                                                {{ $s->nilaiSiswa->whereIn('master_kriteria_id', $masterKriteria->pluck('id'))->count() }}
+                                                / {{ $masterKriteria->count() }} kriteria
                                             </small>
                                         </td>
                                         <td>

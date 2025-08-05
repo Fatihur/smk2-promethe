@@ -66,23 +66,9 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('master-kriteria/{master_kriterium}/force-delete', [\App\Http\Controllers\Admin\MasterKriteriaController::class, 'forceDestroy'])
             ->name('master-kriteria.force-destroy');
 
-        // Kriteria Overview
-        Route::get('kriteria-overview', [\App\Http\Controllers\Admin\KriteriaOverviewController::class, 'index'])
-            ->name('kriteria-overview.index');
-        Route::get('kriteria-overview/export/{format}', [\App\Http\Controllers\Admin\KriteriaOverviewController::class, 'export'])
-            ->name('kriteria-overview.export');
 
-        // Kriteria Jurusan Management
-        Route::get('jurusan/{jurusan}/kriteria', [\App\Http\Controllers\Admin\KriteriaJurusanController::class, 'index'])
-            ->name('kriteria-jurusan.index');
-        Route::post('jurusan/{jurusan}/kriteria', [\App\Http\Controllers\Admin\KriteriaJurusanController::class, 'store'])
-            ->name('kriteria-jurusan.store');
-        Route::patch('jurusan/{jurusan}/kriteria/{kriteria_jurusan}', [\App\Http\Controllers\Admin\KriteriaJurusanController::class, 'update'])
-            ->name('kriteria-jurusan.update');
-        Route::delete('jurusan/{jurusan}/kriteria/{kriteria_jurusan}', [\App\Http\Controllers\Admin\KriteriaJurusanController::class, 'destroy'])
-            ->name('kriteria-jurusan.destroy');
-        Route::patch('jurusan/{jurusan}/kriteria/{kriteria_jurusan}/toggle-status', [\App\Http\Controllers\Admin\KriteriaJurusanController::class, 'toggleStatus'])
-            ->name('kriteria-jurusan.toggle-status');
+
+
 
         // Tahun Akademik Management
         Route::resource('tahun-akademik', \App\Http\Controllers\Admin\TahunAkademikController::class);
@@ -96,7 +82,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('selection-process')->name('selection-process.')->group(function () {
             Route::get('khusus', [\App\Http\Controllers\Admin\SelectionProcessController::class, 'khusus'])->name('khusus');
             Route::get('umum', [\App\Http\Controllers\Admin\SelectionProcessController::class, 'umum'])->name('umum');
-            Route::get('monitor', [\App\Http\Controllers\Admin\SelectionProcessController::class, 'monitor'])->name('monitor');
+
         });
 
         // Results and Reports Management (Admin)
@@ -105,7 +91,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::prefix('reports')->name('reports.')->group(function () {
-            Route::get('statistics', [\App\Http\Controllers\Admin\ReportController::class, 'statistics'])->name('statistics');
+
             Route::get('export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('export');
         });
     });
@@ -123,15 +109,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('siswa-template', [\App\Http\Controllers\Panitia\SiswaController::class, 'downloadTemplate'])->name('siswa.template');
         Route::get('siswa-export', [\App\Http\Controllers\Panitia\SiswaController::class, 'export'])->name('siswa.export');
 
-        // Nilai Siswa Management (Individual)
-        Route::prefix('siswa/{siswa}')->name('siswa.')->group(function () {
-            Route::get('nilai', [\App\Http\Controllers\Panitia\NilaiController::class, 'index'])->name('nilai.index');
-            Route::get('nilai/create', [\App\Http\Controllers\Panitia\NilaiController::class, 'create'])->name('nilai.create');
-            Route::post('nilai', [\App\Http\Controllers\Panitia\NilaiController::class, 'store'])->name('nilai.store');
-            Route::get('nilai/edit', [\App\Http\Controllers\Panitia\NilaiController::class, 'edit'])->name('nilai.edit');
-            Route::put('nilai', [\App\Http\Controllers\Panitia\NilaiController::class, 'update'])->name('nilai.update');
-            Route::delete('nilai/{nilai}', [\App\Http\Controllers\Panitia\NilaiController::class, 'destroy'])->name('nilai.destroy');
+        // Individual Student Score Management
+        Route::prefix('siswa')->name('siswa.')->group(function () {
+            Route::prefix('{siswa}/nilai')->name('nilai.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Panitia\NilaiController::class, 'index'])->name('index');
+                Route::get('create', [\App\Http\Controllers\Panitia\NilaiController::class, 'create'])->name('create');
+                Route::post('store', [\App\Http\Controllers\Panitia\NilaiController::class, 'store'])->name('store');
+                Route::get('edit', [\App\Http\Controllers\Panitia\NilaiController::class, 'edit'])->name('edit');
+                Route::put('update', [\App\Http\Controllers\Panitia\NilaiController::class, 'update'])->name('update');
+                Route::delete('{nilai}', [\App\Http\Controllers\Panitia\NilaiController::class, 'destroy'])->name('destroy');
+            });
         });
+
+
 
         // Nilai Siswa Management (Per Jurusan)
         Route::prefix('nilai-jurusan')->name('nilai-jurusan.')->group(function () {

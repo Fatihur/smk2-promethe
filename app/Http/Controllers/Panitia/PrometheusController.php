@@ -7,6 +7,7 @@ use App\Services\PrometheusService;
 use App\Models\TahunAkademik;
 use App\Models\Siswa;
 use App\Models\PrometheusResult;
+use App\Models\MasterKriteria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -96,7 +97,12 @@ class PrometheusController extends Controller
                 ->with('error', 'Belum ada hasil PROMETHEE untuk kategori Khusus.');
         }
 
-        return view('panitia.promethee.khusus-results', compact('results'));
+        // Get active kriteria with weights for display
+        $kriteria = MasterKriteria::where('is_active', true)
+            ->orderBy('kode_kriteria')
+            ->get();
+
+        return view('panitia.promethee.khusus-results', compact('results', 'kriteria'));
     }
 
     /**
@@ -169,7 +175,12 @@ class PrometheusController extends Controller
                 ->with('error', 'Belum ada hasil PROMETHEE untuk kategori Umum.');
         }
 
-        return view('panitia.promethee.umum-results', compact('results'));
+        // Get active kriteria with weights for display
+        $kriteria = MasterKriteria::where('is_active', true)
+            ->orderBy('kode_kriteria')
+            ->get();
+
+        return view('panitia.promethee.umum-results', compact('results', 'kriteria'));
     }
 
     /**

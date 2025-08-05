@@ -1,0 +1,127 @@
+@startuml
+!theme plain
+title Use Case Diagram - Proses PROMETHEE dalam Sistem PPDB SMK
+
+' Actors
+actor "Panitia" as panitia
+actor "Ketua Jurusan" as ketua_jurusan
+actor "Admin" as admin
+
+' System boundary
+rectangle "Sistem PROMETHEE PPDB" {
+    
+    ' Data Preparation Package
+    package "Data Preparation" {
+        usecase "Input Data Siswa" as UC1
+        usecase "Import Siswa Excel" as UC2
+        usecase "Input Nilai Kriteria" as UC3
+        usecase "Bulk Input Nilai" as UC4
+        usecase "Validate Data Completeness" as UC5
+    }
+    
+    ' PROMETHEE Calculation Package
+    package "PROMETHEE Calculation" {
+        usecase "Set Kuota Khusus" as UC6
+        usecase "Run PROMETHEE Khusus" as UC7
+        usecase "Generate Ranking Khusus" as UC8
+        usecase "Determine Kuota Status" as UC9
+        usecase "Run PROMETHEE Umum" as UC10
+        usecase "Generate Final Ranking" as UC11
+    }
+    
+    ' Validation Package
+    package "Validation Process" {
+        usecase "Review Khusus Results" as UC12
+        usecase "Validate Individual Student" as UC13
+        usecase "Bulk Validate Students" as UC14
+        usecase "Reject Student" as UC15
+        usecase "Approve Student" as UC16
+    }
+    
+    ' Transfer Package
+    package "Transfer Process" {
+        usecase "Identify Failed Khusus" as UC17
+        usecase "Transfer to Umum Category" as UC18
+        usecase "Update Student Category" as UC19
+        usecase "Recalculate Umum Ranking" as UC20
+    }
+    
+    ' Reporting Package
+    package "Reporting" {
+        usecase "Generate Selection Report" as UC21
+        usecase "Export Results Excel" as UC22
+        usecase "Print Ranking Report" as UC23
+        usecase "View Statistics" as UC24
+        usecase "Monitor Process Status" as UC25
+    }
+}
+
+' Panitia relationships
+panitia --> UC1
+panitia --> UC2
+panitia --> UC3
+panitia --> UC4
+panitia --> UC5
+panitia --> UC6
+panitia --> UC7
+panitia --> UC8
+panitia --> UC9
+panitia --> UC10
+panitia --> UC11
+panitia --> UC17
+panitia --> UC18
+panitia --> UC19
+panitia --> UC20
+panitia --> UC21
+panitia --> UC22
+panitia --> UC23
+panitia --> UC24
+panitia --> UC25
+
+' Ketua Jurusan relationships
+ketua_jurusan --> UC12
+ketua_jurusan --> UC13
+ketua_jurusan --> UC14
+ketua_jurusan --> UC15
+ketua_jurusan --> UC16
+ketua_jurusan --> UC24
+ketua_jurusan --> UC25
+
+' Admin relationships
+admin --> UC24
+admin --> UC25
+admin --> UC21
+admin --> UC22
+
+' Include relationships (mandatory dependencies)
+UC7 ..> UC1 : <<include>>
+UC7 ..> UC3 : <<include>>
+UC7 ..> UC5 : <<include>>
+UC7 ..> UC6 : <<include>>
+UC8 ..> UC7 : <<include>>
+UC9 ..> UC8 : <<include>>
+UC10 ..> UC12 : <<include>>
+UC10 ..> UC18 : <<include>>
+UC11 ..> UC10 : <<include>>
+UC13 ..> UC12 : <<include>>
+UC15 ..> UC13 : <<include>>
+UC16 ..> UC13 : <<include>>
+UC17 ..> UC9 : <<include>>
+UC18 ..> UC17 : <<include>>
+UC19 ..> UC18 : <<include>>
+UC20 ..> UC19 : <<include>>
+
+' Extend relationships (optional features)
+UC2 ..> UC1 : <<extend>>
+UC4 ..> UC3 : <<extend>>
+UC14 ..> UC13 : <<extend>>
+UC22 ..> UC21 : <<extend>>
+UC23 ..> UC21 : <<extend>>
+
+' Sequence constraints
+note right of UC7 : Harus setelah data lengkap
+note right of UC10 : Harus setelah validasi khusus selesai
+note right of UC18 : Otomatis untuk siswa yang tidak masuk kuota
+note right of UC20 : Diperlukan jika ada transfer siswa
+
+@enduml

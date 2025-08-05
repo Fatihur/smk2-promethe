@@ -44,7 +44,7 @@
                         </div>
                     @endif
 
-                    @if($kriteriaJurusan->isEmpty())
+                    @if($masterKriteria->isEmpty())
                         <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle"></i>
                             Belum ada kriteria penilaian yang aktif untuk jurusan ini.
@@ -59,10 +59,11 @@
                         <div class="alert alert-info">
                             <h6><i class="fas fa-info-circle"></i> Kriteria Penilaian:</h6>
                             <div class="row">
-                                @foreach($kriteriaJurusan as $kj)
+                                @foreach($masterKriteria as $kriteria)
                                     <div class="col-md-3 mb-2">
-                                        <span class="badge badge-primary">{{ $kj->masterKriteria->nama_kriteria }}</span>
-                                        <small class="text-muted">({{ $kj->nilai_min }}-{{ $kj->nilai_max }})</small>
+                                        <span class="badge badge-primary">{{ $kriteria->nama_kriteria }}</span>
+                                        <small class="text-muted d-block">Bobot: {{ $kriteria->bobot }}%</small>
+                                        <small class="text-muted">Range: {{ $kriteria->nilai_min }} - {{ $kriteria->nilai_max }}</small>
                                     </div>
                                 @endforeach
                             </div>
@@ -76,13 +77,13 @@
                                         <th rowspan="2" class="align-middle" width="5%">No</th>
                                         <th rowspan="2" class="align-middle" width="15%">No. Pendaftaran</th>
                                         <th rowspan="2" class="align-middle" width="20%">Nama Siswa</th>
-                                        <th colspan="{{ $kriteriaJurusan->count() }}" class="text-center">Kriteria Penilaian</th>
+                                        <th colspan="{{ $masterKriteria->count() }}" class="text-center">Kriteria Penilaian</th>
                                     </tr>
                                     <tr>
-                                        @foreach($kriteriaJurusan as $kj)
-                                            <th class="text-center" width="{{ 60 / $kriteriaJurusan->count() }}%">
-                                                {{ $kj->masterKriteria->nama_kriteria }}
-                                                <br><small class="text-muted">({{ $kj->nilai_min }}-{{ $kj->nilai_max }})</small>
+                                        @foreach($masterKriteria as $kriteria)
+                                            <th class="text-center" width="{{ 60 / $masterKriteria->count() }}%">
+                                                {{ $kriteria->nama_kriteria }}
+                                                <br><small class="text-muted">Bobot: {{ $kriteria->bobot }}%</small>
                                             </th>
                                         @endforeach
                                     </tr>
@@ -101,18 +102,18 @@
                                                 <strong>{{ $s->nama_lengkap }}</strong>
                                                 <br><small class="text-muted">{{ $s->nisn }}</small>
                                             </td>
-                                            @foreach($kriteriaJurusan as $kj)
+                                            @foreach($masterKriteria as $kriteria)
                                                 <td class="text-center">
-                                                    <input type="number" 
-                                                           class="form-control form-control-sm text-center nilai-input" 
-                                                           name="nilai[{{ $s->id }}][{{ $kj->master_kriteria_id }}]" 
-                                                           value="{{ isset($nilaiData[$s->id][$kj->master_kriteria_id]) ? $nilaiData[$s->id][$kj->master_kriteria_id]->nilai : '' }}" 
-                                                           min="{{ $kj->nilai_min }}" 
-                                                           max="{{ $kj->nilai_max }}" 
-                                                           step="0.01" 
-                                                           placeholder="0-{{ $kj->nilai_max }}"
+                                                    <input type="number"
+                                                           class="form-control form-control-sm text-center nilai-input"
+                                                           name="nilai[{{ $s->id }}][{{ $kriteria->id }}]"
+                                                           value="{{ isset($existingNilai[$s->id][$kriteria->id]) ? $existingNilai[$s->id][$kriteria->id] : '' }}"
+                                                           min="{{ $kriteria->nilai_min }}"
+                                                           max="{{ $kriteria->nilai_max }}"
+                                                           step="0.01"
+                                                           placeholder="{{ $kriteria->nilai_min }}-{{ $kriteria->nilai_max }}"
                                                            data-siswa="{{ $s->id }}"
-                                                           data-kriteria="{{ $kj->master_kriteria_id }}">
+                                                           data-kriteria="{{ $kriteria->id }}">
                                                 </td>
                                             @endforeach
                                         </tr>
@@ -143,7 +144,7 @@
                     @endif
                 </div>
                 
-                @if($kriteriaJurusan->isNotEmpty() && $siswa->isNotEmpty())
+                @if($masterKriteria->isNotEmpty() && $siswa->isNotEmpty())
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary" id="submitBtn">
                             <i class="fas fa-save"></i> Simpan Semua Nilai
@@ -153,7 +154,7 @@
                         </a>
                         <div class="float-right">
                             <small class="text-muted">
-                                <span id="filledCount">0</span> dari <span id="totalFields">{{ $siswa->count() * $kriteriaJurusan->count() }}</span> field terisi
+                                <span id="filledCount">0</span> dari <span id="totalFields">{{ $siswa->count() * $masterKriteria->count() }}</span> field terisi
                             </small>
                         </div>
                     </div>
@@ -182,8 +183,8 @@
                     <label for="fillKriteria">Kriteria yang akan diisi:</label>
                     <select class="form-control" id="fillKriteria">
                         <option value="all">Semua Kriteria</option>
-                        @foreach($kriteriaJurusan as $kj)
-                            <option value="{{ $kj->master_kriteria_id }}">{{ $kj->masterKriteria->nama_kriteria }}</option>
+                        @foreach($masterKriteria as $kriteria)
+                            <option value="{{ $kriteria->id }}">{{ $kriteria->nama_kriteria }}</option>
                         @endforeach
                     </select>
                 </div>

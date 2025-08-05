@@ -33,6 +33,27 @@
             </div>
             <div class="card-body">
                 @if(!empty($results))
+                    <!-- Informasi Bobot Kriteria -->
+                    <div class="alert alert-secondary">
+                        <h5><i class="icon fas fa-weight"></i> Bobot Kriteria PROMETHEE</h5>
+                        <div class="row">
+                            @php
+                                $totalBobot = $kriteria->sum('bobot');
+                            @endphp
+                            @foreach($kriteria as $k)
+                                <div class="col-md-4">
+                                    <strong>{{ $k->nama_kriteria }}:</strong>
+                                    <span class="badge badge-primary">{{ number_format($k->bobot, 2) }}</span>
+                                    <small class="text-muted">({{ number_format(($k->bobot / $totalBobot) * 100, 1) }}%)</small>
+                                </div>
+                            @endforeach
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            Bobot dinormalisasi otomatis dalam perhitungan PROMETHEE. Total bobot: {{ number_format($totalBobot, 2) }}
+                        </small>
+                    </div>
+
                     <div class="alert alert-info">
                         <h5><i class="icon fas fa-info"></i> Informasi Hasil</h5>
                         <div class="row">

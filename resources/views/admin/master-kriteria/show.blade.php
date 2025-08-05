@@ -78,10 +78,10 @@
             </div>
             <div class="card-body">
                 <div class="info-box">
-                    <span class="info-box-icon bg-info"><i class="fas fa-graduation-cap"></i></span>
+                    <span class="info-box-icon bg-info"><i class="fas fa-globe"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text">Digunakan oleh</span>
-                        <span class="info-box-number">{{ $usageCount }} Jurusan</span>
+                        <span class="info-box-text">Kriteria Global</span>
+                        <span class="info-box-number">Semua Jurusan</span>
                     </div>
                 </div>
 
@@ -93,7 +93,7 @@
                     </div>
                 </div>
 
-                @if($usageCount > 0 || $nilaiSiswaCount > 0)
+                @if($nilaiSiswaCount > 0)
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle"></i>
                         <strong>Perhatian!</strong> Kriteria ini tidak dapat dihapus karena sedang digunakan.
@@ -129,7 +129,7 @@
                         </button>
                     </form>
 
-                    @if($usageCount == 0 && $nilaiSiswaCount == 0)
+                    @if($nilaiSiswaCount == 0)
                         <form action="{{ route('admin.master-kriteria.destroy', $masterKriterium) }}"
                               method="POST" style="display: inline;"
                               onsubmit="return confirm('Yakin ingin menghapus kriteria ini?')">
@@ -156,53 +156,34 @@
     </div>
 </div>
 
-@if($usageCount > 0)
+<!-- Kriteria sekarang bersifat global, tidak per jurusan -->
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Digunakan oleh Jurusan</h3>
+        <h3 class="card-title">Informasi Penggunaan</h3>
     </div>
     <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Jurusan</th>
-                        <th>Rentang Nilai</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($masterKriterium->kriteriaJurusan as $index => $kriteriaJurusan)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $kriteriaJurusan->jurusan->nama_jurusan }}</td>
-                            <td><span class="badge badge-primary">{{ $kriteriaJurusan->nilai_min }} - {{ $kriteriaJurusan->nilai_max }}</span></td>
-                            <td>
-                                @if($kriteriaJurusan->is_active)
-                                    <span class="badge badge-success">Aktif</span>
-                                @else
-                                    <span class="badge badge-secondary">Tidak Aktif</span>
-                                @endif
-                            </td>
-                            <td>
-                                <a href="{{ route('admin.kriteria-jurusan.index', $kriteriaJurusan->jurusan) }}" 
-                                   class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Kelola
-                                </a>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <strong>Kriteria Global:</strong> Kriteria ini berlaku untuk semua jurusan dengan bobot <strong>{{ number_format($masterKriterium->bobot, 2) }}</strong>
+            dan rentang nilai <strong>{{ $masterKriterium->nilai_min }} - {{ $masterKriterium->nilai_max }}</strong>.
         </div>
+
+        @if($nilaiSiswaCount > 0)
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                Kriteria ini telah digunakan untuk menilai <strong>{{ $nilaiSiswaCount }}</strong> siswa.
+            </div>
+        @else
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                Kriteria ini belum digunakan untuk menilai siswa manapun.
+            </div>
+        @endif
     </div>
 </div>
-@endif
 
 <!-- Force Delete Modal -->
-@if($usageCount > 0 || $nilaiSiswaCount > 0)
+@if($nilaiSiswaCount > 0)
 <div class="modal fade" id="forceDeleteModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -219,9 +200,6 @@
                     <h6><strong>PERINGATAN!</strong></h6>
                     <p>Anda akan menghapus kriteria <strong>{{ $masterKriterium->nama_kriteria }}</strong> beserta:</p>
                     <ul>
-                        @if($usageCount > 0)
-                            <li><strong>{{ $usageCount }} penggunaan</strong> di jurusan</li>
-                        @endif
                         @if($nilaiSiswaCount > 0)
                             <li><strong>{{ $nilaiSiswaCount }} data nilai siswa</strong></li>
                         @endif

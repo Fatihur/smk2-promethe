@@ -43,7 +43,8 @@
                     <th>Kode</th>
                     <th>Nama Kriteria</th>
                     <th>Tipe</th>
-                    <th>Penggunaan</th>
+                    <th>Bobot</th>
+                    <th>Rentang Nilai</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -62,14 +63,10 @@
                             @endif
                         </td>
                         <td>
-                            @php
-                                $usageCount = $item->kriteriaJurusan()->count();
-                            @endphp
-                            @if($usageCount > 0)
-                                <span class="badge badge-info">{{ $usageCount }} Jurusan</span>
-                            @else
-                                <span class="badge badge-secondary">Belum digunakan</span>
-                            @endif
+                            <span class="badge badge-primary">{{ number_format($item->bobot, 2) }}</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-secondary">{{ $item->nilai_min }} - {{ $item->nilai_max }}</span>
                         </td>
                         <td>
                             @if($item->is_active)
@@ -98,7 +95,7 @@
                                         <i class="fas fa-{{ $item->is_active ? 'times' : 'check' }}"></i>
                                     </button>
                                 </form>
-                                @if($usageCount == 0 && $item->nilaiSiswa()->count() == 0)
+                                @if($item->nilaiSiswa()->count() == 0)
                                     <form action="{{ route('admin.master-kriteria.destroy', $item) }}"
                                           method="POST" style="display: inline;"
                                           onsubmit="return confirm('Yakin ingin menghapus kriteria ini?')">

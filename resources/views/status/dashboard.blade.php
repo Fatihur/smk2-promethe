@@ -49,7 +49,7 @@
     <!-- Statistics Cards -->
     <div class="row">
         <div class="col-lg-3 col-6">
-            <div class="small-box bg-info">
+            <div class="small-box bg-success">
                 <div class="inner">
                     <h3>{{ $stats['siswa_stats']['total'] }}</h3>
                     <p>Total Pendaftar</p>

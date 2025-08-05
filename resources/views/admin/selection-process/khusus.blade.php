@@ -25,9 +25,7 @@
                         <a href="{{ route('admin.selection-process.umum') }}" class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-users"></i> Umum
                         </a>
-                        <a href="{{ route('admin.selection-process.monitor') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-eye"></i> Monitor
-                        </a>
+
                     </div>
                 </div>
             </div>

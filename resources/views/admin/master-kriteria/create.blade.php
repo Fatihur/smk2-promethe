@@ -60,6 +60,63 @@
                 </div>
             </div>
 
+            <!-- Bobot dan Rentang Nilai -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="bobot">Bobot <span class="text-danger">*</span></label>
+                        <input type="number"
+                               class="form-control @error('bobot') is-invalid @enderror"
+                               id="bobot"
+                               name="bobot"
+                               value="{{ old('bobot', 1.0) }}"
+                               min="0.01"
+                               max="100"
+                               step="0.01"
+                               placeholder="1.0"
+                               required>
+                        <small class="form-text text-muted">Bobot kriteria untuk perhitungan PROMETHEE</small>
+                        @error('bobot')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="nilai_min">Nilai Minimum <span class="text-danger">*</span></label>
+                        <input type="number"
+                               class="form-control @error('nilai_min') is-invalid @enderror"
+                               id="nilai_min"
+                               name="nilai_min"
+                               value="{{ old('nilai_min', 0) }}"
+                               min="0"
+                               step="0.01"
+                               placeholder="0"
+                               required>
+                        @error('nilai_min')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="nilai_max">Nilai Maksimum <span class="text-danger">*</span></label>
+                        <input type="number"
+                               class="form-control @error('nilai_max') is-invalid @enderror"
+                               id="nilai_max"
+                               name="nilai_max"
+                               value="{{ old('nilai_max', 100) }}"
+                               min="1"
+                               step="0.01"
+                               placeholder="100"
+                               required>
+                        @error('nilai_max')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="nama_kriteria">Nama Kriteria <span class="text-danger">*</span></label>
                 <input type="text" 

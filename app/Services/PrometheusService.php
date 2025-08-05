@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Siswa;
-use App\Models\KriteriaJurusan;
+use App\Models\MasterKriteria;
 use App\Models\NilaiSiswa;
 use App\Models\PrometheusResult;
 use App\Models\TahunAkademik;
@@ -42,27 +42,27 @@ class PrometheusService
             return ['error' => 'PROMETHEE memerlukan minimal 2 siswa untuk perbandingan'];
         }
 
-        // Get first siswa's jurusan to determine kriteria weights
-        $firstSiswa = $siswa->first();
-        if (!$firstSiswa || !$firstSiswa->pilihan_jurusan_1) {
-            return ['error' => 'Tidak dapat menentukan jurusan untuk kriteria'];
-        }
-
-        // Get active kriteria jurusan with weights
-        $kriteriaJurusan = KriteriaJurusan::where('jurusan_id', $firstSiswa->pilihan_jurusan_1)
-            ->where('is_active', true)
-            ->with('masterKriteria')
+        // Get active master kriteria (global criteria)
+        $masterKriteria = MasterKriteria::where('is_active', true)
+            ->orderBy('kode_kriteria')
             ->get();
 
-        if ($kriteriaJurusan->isEmpty()) {
-            return ['error' => 'Tidak ada kriteria aktif untuk jurusan ini'];
+        if ($masterKriteria->isEmpty()) {
+            return ['error' => 'Tidak ada kriteria aktif dalam sistem'];
         }
 
-        // Validate that all siswa have complete nilai
+        // Validate that all kriteria have bobot set
+        $totalBobot = $masterKriteria->sum('bobot');
+        if ($totalBobot <= 0) {
+            return ['error' => 'Bobot kriteria belum diset. Silakan set bobot untuk semua kriteria di menu Master Kriteria.'];
+        }
+
+        // Validate that all siswa have complete nilai for all active kriteria
         foreach ($siswa as $s) {
-            $nilaiCount = $s->nilaiSiswa->count();
-            if ($nilaiCount < $kriteriaJurusan->count()) {
-                return ['error' => "Siswa {$s->nama_lengkap} belum memiliki nilai lengkap"];
+            $nilaiCount = $s->nilaiSiswa->whereIn('master_kriteria_id', $masterKriteria->pluck('id'))->count();
+            if ($nilaiCount < $masterKriteria->count()) {
+                $missingKriteria = $masterKriteria->whereNotIn('id', $s->nilaiSiswa->pluck('master_kriteria_id'))->pluck('nama_kriteria')->implode(', ');
+                return ['error' => "Siswa {$s->nama_lengkap} (No. {$s->no_pendaftaran}) belum memiliki nilai lengkap. Kriteria yang belum diisi: {$missingKriteria}"];
             }
         }
 
@@ -70,7 +70,7 @@ class PrometheusService
          * LANGKAH-LANGKAH PERHITUNGAN PROMETHEE (Preferensi Usual)
          *
          * 1. Siapkan Data Alternatif (Siswa) dan Nilai Kriterianya
-         * 2. Tentukan Bobot Kriteria (equal weights dalam implementasi ini)
+         * 2. Tentukan Bobot Kriteria dari master_kriteria.bobot
          * 3. Hitung Selisih Antar Alternatif: d_k(A,B) = nilai_kriteria_A - nilai_kriteria_B
          * 4. Hitung Nilai Preferensi per Kriteria: P(d) = 1 if d > 0, else P(d) = 0
          * 5. Hitung Indeks Preferensi Global: π(A,B) = Σ [w_k × P_k(A,B)]
@@ -80,16 +80,19 @@ class PrometheusService
          */
 
         // Step 1: Build decision matrix (Data Alternatif dan Nilai Kriteria)
-        $decisionMatrix = $this->buildDecisionMatrix($siswa, $kriteriaJurusan->pluck('masterKriteria'));
+        $decisionMatrix = $this->buildDecisionMatrix($siswa, $masterKriteria);
 
         // Steps 2-5: Calculate preference matrix (Bobot, Selisih, Preferensi, Indeks Global)
-        $preferenceMatrix = $this->calculatePreferenceMatrix($decisionMatrix, $kriteriaJurusan);
+        $preferenceMatrix = $this->calculatePreferenceMatrix($decisionMatrix, $masterKriteria);
 
         // Steps 6-7: Calculate outranking flows (Leaving Flow, Entering Flow, Net Flow)
         $flows = $this->calculateOutrankingFlows($preferenceMatrix, $siswa->count());
 
         // Step 8: Calculate net flows and ranking (Ranking berdasarkan Net Flow)
         $results = $this->calculateNetFlowsAndRanking($flows, $siswa, $kuota);
+
+        // Add calculation details for debugging
+        $results = $this->addCalculationDetails($results, $decisionMatrix, $masterKriteria, $siswa);
 
         // Save results to database
         $this->saveResults($results, $kategori, $tahunAkademikId);
@@ -105,6 +108,7 @@ class PrometheusService
 
     /**
      * Build decision matrix from siswa nilai
+     * Step 1: Siapkan Data Alternatif (Siswa) dan Nilai Kriterianya
      */
     private function buildDecisionMatrix($siswa, $kriteria): array
     {
@@ -113,8 +117,18 @@ class PrometheusService
         foreach ($siswa as $index => $s) {
             $matrix[$index] = [];
             foreach ($kriteria as $k) {
-                $nilai = $s->nilaiSiswa->where('master_kriteria_id', $k->id)->first();
-                $matrix[$index][$k->id] = $nilai ? $nilai->nilai : 0;
+                $nilaiSiswa = $s->nilaiSiswa->where('master_kriteria_id', $k->id)->first();
+
+                if (!$nilaiSiswa) {
+                    throw new \Exception("Nilai untuk siswa {$s->nama_lengkap} pada kriteria {$k->nama_kriteria} tidak ditemukan");
+                }
+
+                // Validate nilai is within range
+                if (!$k->isNilaiValid($nilaiSiswa->nilai)) {
+                    throw new \Exception("Nilai {$nilaiSiswa->nilai} untuk siswa {$s->nama_lengkap} pada kriteria {$k->nama_kriteria} tidak dalam rentang {$k->nilai_min}-{$k->nilai_max}");
+                }
+
+                $matrix[$index][$k->id] = (float) $nilaiSiswa->nilai;
             }
         }
 
@@ -125,7 +139,7 @@ class PrometheusService
      * Calculate preference matrix using usual preference function
      * Following PROMETHEE steps with Usual preference function
      */
-    private function calculatePreferenceMatrix($decisionMatrix, $kriteriaJurusan): array
+    private function calculatePreferenceMatrix($decisionMatrix, $masterKriteria): array
     {
         $n = count($decisionMatrix);
         $preferenceMatrix = [];
@@ -138,9 +152,8 @@ class PrometheusService
         }
 
         // Define weights for each criteria (Step 2: Tentukan Bobot Kriteria)
-        // Since we don't have bobot field anymore, we'll use equal weights
-        // or calculate based on range width as importance indicator
-        $weights = $this->calculateCriteriaWeights($kriteriaJurusan);
+        // Use bobot from master_kriteria
+        $weights = $this->calculateCriteriaWeights($masterKriteria);
 
         // Step 3-5: Calculate preferences for each pair of alternatives
         for ($i = 0; $i < $n; $i++) {
@@ -148,8 +161,7 @@ class PrometheusService
                 if ($i != $j) {
                     $globalPreference = 0;
 
-                    foreach ($kriteriaJurusan as $kj) {
-                        $k = $kj->masterKriteria;
+                    foreach ($masterKriteria as $k) {
                         $weight = $weights[$k->id];
 
                         // Step 3: Hitung Selisih Antar Alternatif
@@ -181,39 +193,17 @@ class PrometheusService
     /**
      * Calculate criteria weights
      * Step 2: Tentukan Bobot Kriteria
-     *
-     * Since bobot field is removed, we use equal weights by default
-     * This can be modified to use predefined weights or range-based weights
      */
-    private function calculateCriteriaWeights($kriteriaJurusan): array
+    private function calculateCriteriaWeights($masterKriteria): array
     {
         $weights = [];
-        $totalKriteria = $kriteriaJurusan->count();
+        $totalBobot = $masterKriteria->sum('bobot');
 
-        // Option 1: Equal weights (current implementation)
-        foreach ($kriteriaJurusan as $kj) {
-            $weights[$kj->masterKriteria->id] = 1.0 / $totalKriteria;
+        // Use bobot from master_kriteria, normalize to sum = 1
+        // Total bobot validation is done in main function
+        foreach ($masterKriteria as $k) {
+            $weights[$k->id] = $k->bobot / $totalBobot;
         }
-
-        // Option 2: Predefined weights based on criteria type (can be uncommented if needed)
-        /*
-        foreach ($kriteriaJurusan as $kj) {
-            $kode = $kj->masterKriteria->kode_kriteria;
-            switch ($kode) {
-                case 'TPA':
-                    $weights[$kj->masterKriteria->id] = 0.5;  // 50%
-                    break;
-                case 'PSI':
-                    $weights[$kj->masterKriteria->id] = 0.25; // 25%
-                    break;
-                case 'MNT':
-                    $weights[$kj->masterKriteria->id] = 0.25; // 25%
-                    break;
-                default:
-                    $weights[$kj->masterKriteria->id] = 1.0 / $totalKriteria;
-            }
-        }
-        */
 
         return $weights;
     }
@@ -376,5 +366,34 @@ class PrometheusService
             'transferred_count' => $transferredCount,
             'message' => "Berhasil memindahkan {$transferredCount} siswa dari kategori Khusus ke Umum"
         ];
+    }
+
+    /**
+     * Add calculation details for debugging and verification
+     */
+    private function addCalculationDetails($results, $decisionMatrix, $masterKriteria, $siswa): array
+    {
+        // Calculate weights for display
+        $weights = $this->calculateCriteriaWeights($masterKriteria);
+
+        // Add calculation metadata
+        foreach ($results as &$result) {
+            $result['calculation_details'] = [
+                'kriteria_weights' => $weights,
+                'kriteria_info' => $masterKriteria->map(function($k) use ($weights) {
+                    return [
+                        'id' => $k->id,
+                        'nama' => $k->nama_kriteria,
+                        'kode' => $k->kode_kriteria,
+                        'bobot_asli' => $k->bobot,
+                        'bobot_normalized' => $weights[$k->id],
+                        'tipe' => $k->tipe ?? 'benefit'
+                    ];
+                })->toArray(),
+                'siswa_nilai' => []
+            ];
+        }
+
+        return $results;
     }
 }

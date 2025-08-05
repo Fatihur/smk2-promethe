@@ -113,25 +113,9 @@ class BreadcrumbService
                 }
                 break;
 
-            case 'kriteria-overview':
-                $breadcrumbs[] = [
-                    'text' => 'Overview Kriteria',
-                    'url' => route('admin.kriteria-overview.index'),
-                    'icon' => 'fas fa-table'
-                ];
-                break;
 
-            case 'kriteria-jurusan':
-                $breadcrumbs[] = [
-                    'text' => 'Kelola Jurusan',
-                    'url' => route('admin.jurusan.index'),
-                    'icon' => 'fas fa-graduation-cap'
-                ];
-                $breadcrumbs[] = [
-                    'text' => 'Kriteria Jurusan',
-                    'icon' => 'fas fa-clipboard-list'
-                ];
-                break;
+
+
 
             case 'tahun-akademik':
                 $breadcrumbs[] = [
@@ -181,9 +165,7 @@ class BreadcrumbService
                         case 'umum':
                             $breadcrumbs[] = ['text' => 'Kategori Umum'];
                             break;
-                        case 'monitor':
-                            $breadcrumbs[] = ['text' => 'Monitor Proses'];
-                            break;
+
                     }
                 }
                 break;
@@ -204,9 +186,7 @@ class BreadcrumbService
 
                 if (isset($routeParts[2])) {
                     switch ($routeParts[2]) {
-                        case 'statistics':
-                            $breadcrumbs[] = ['text' => 'Statistik'];
-                            break;
+
                         case 'export':
                             $breadcrumbs[] = ['text' => 'Export Data'];
                             break;

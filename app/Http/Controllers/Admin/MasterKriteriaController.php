@@ -50,6 +50,9 @@ class MasterKriteriaController extends Controller
             'nama_kriteria' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'tipe' => 'required|in:benefit,cost',
+            'bobot' => 'required|numeric|min:0.01|max:100',
+            'nilai_min' => 'required|numeric|min:0',
+            'nilai_max' => 'required|numeric|min:1|gt:nilai_min',
             'is_active' => 'boolean',
         ]);
 
@@ -64,13 +67,10 @@ class MasterKriteriaController extends Controller
      */
     public function show(MasterKriteria $masterKriterium)
     {
-        $masterKriterium->load(['jurusans', 'kriteriaJurusan.jurusan']);
-        $usageCount = $masterKriterium->kriteriaJurusan()->count();
         $nilaiSiswaCount = $masterKriterium->nilaiSiswa()->count();
 
         return view('admin.master-kriteria.show', compact(
             'masterKriterium',
-            'usageCount',
             'nilaiSiswaCount'
         ));
     }
@@ -98,6 +98,9 @@ class MasterKriteriaController extends Controller
             'nama_kriteria' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'tipe' => 'required|in:benefit,cost',
+            'bobot' => 'required|numeric|min:0.01|max:100',
+            'nilai_min' => 'required|numeric|min:0',
+            'nilai_max' => 'required|numeric|min:1|gt:nilai_min',
             'is_active' => 'boolean',
         ]);
 

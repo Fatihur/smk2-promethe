@@ -1,0 +1,80 @@
+@startuml
+!theme plain
+title Sequence Diagram - Proses PROMETHEE dalam Sistem PPDB SMK
+
+actor Panitia
+actor "Ketua Jurusan" as KJ
+actor Admin
+participant "Sistem PPDB" as System
+database "Database" as DB
+
+== Tahap Persiapan Data ==
+Panitia -> System: Input/Import Data Siswa
+System -> DB: Simpan Data Siswa
+Panitia -> System: Input Nilai Kriteria
+System -> DB: Simpan Nilai Siswa
+System -> Panitia: Konfirmasi Data Lengkap
+
+== Tahap PROMETHEE Kategori Khusus ==
+Panitia -> System: Set Kuota Khusus
+Panitia -> System: Jalankan PROMETHEE Khusus
+activate System
+System -> DB: Ambil Data Siswa Khusus
+System -> DB: Ambil Nilai Kriteria
+System -> System: Hitung Decision Matrix
+System -> System: Hitung Preference Matrix
+System -> System: Hitung Outranking Flows
+System -> System: Hitung Net Flows & Ranking
+System -> DB: Simpan Hasil PROMETHEE
+deactivate System
+System -> Panitia: Hasil Ranking Khusus
+
+== Tahap Validasi ==
+KJ -> System: Lihat Hasil Khusus
+System -> DB: Ambil Siswa Masuk Kuota
+System -> KJ: Tampilkan Daftar Siswa
+
+loop Untuk setiap siswa yang masuk kuota
+    KJ -> System: Review Data Siswa
+    alt Approve
+        KJ -> System: Approve Siswa
+        System -> DB: Update Status = Approved
+    else Reject
+        KJ -> System: Reject Siswa
+        System -> DB: Update Status = Rejected
+        System -> DB: Pindah ke Kategori Umum
+    end
+end
+
+System -> KJ: Konfirmasi Validasi Selesai
+
+== Tahap Transfer dan PROMETHEE Umum ==
+System -> DB: Identifikasi Siswa Khusus Gagal
+System -> DB: Transfer ke Kategori Umum
+System -> DB: Update Pilihan Jurusan
+
+Panitia -> System: Jalankan PROMETHEE Umum
+activate System
+System -> DB: Ambil Data Siswa Umum (termasuk transfer)
+System -> System: Hitung PROMETHEE Umum
+System -> DB: Simpan Hasil Final
+deactivate System
+System -> Panitia: Hasil Ranking Final
+
+== Tahap Pelaporan ==
+Admin -> System: Generate Laporan
+System -> DB: Ambil Semua Hasil
+System -> Admin: Laporan Lengkap
+
+Panitia -> System: Export Hasil
+System -> Panitia: File Excel/PDF
+
+note over System
+  Algoritma PROMETHEE menggunakan:
+  - Fungsi Preferensi: Usual
+  - Kriteria: TPA, Psikotes, Minat Bakat, dll
+  - Bobot: Equal weight atau berdasarkan konfigurasi
+  - Output: Phi+, Phi-, Phi Net, Ranking
+end note
+
+@enduml

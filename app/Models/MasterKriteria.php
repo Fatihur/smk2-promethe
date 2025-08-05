@@ -16,30 +16,22 @@ class MasterKriteria extends Model
         'nama_kriteria',
         'deskripsi',
         'tipe',
+        'bobot',
+        'nilai_min',
+        'nilai_max',
         'is_active',
     ];
 
     protected $casts = [
+        'bobot' => 'decimal:2',
+        'nilai_min' => 'decimal:2',
+        'nilai_max' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
     /**
-     * Get the jurusan that use this kriteria with their weights.
+     * Get the nilai siswa for the kriteria.
      */
-    public function jurusans()
-    {
-        return $this->belongsToMany(Jurusan::class, 'kriteria_jurusan')
-                    ->withPivot('bobot', 'is_active')
-                    ->withTimestamps();
-    }
-
-    /**
-     * Get the kriteria jurusan pivot records.
-     */
-    public function kriteriaJurusan()
-    {
-        return $this->hasMany(KriteriaJurusan::class);
-    }
 
     /**
      * Get the nilai siswa for the kriteria.
@@ -98,26 +90,36 @@ class MasterKriteria extends Model
     }
 
     /**
-     * Get weight for specific jurusan
+     * Get formatted bobot for display
      */
-    public function getBobotForJurusan($jurusanId)
+    public function getBobotFormattedAttribute()
     {
-        $kriteriaJurusan = $this->kriteriaJurusan()
-                                ->where('jurusan_id', $jurusanId)
-                                ->first();
-        
-        return $kriteriaJurusan ? $kriteriaJurusan->bobot : 0;
+        return number_format($this->bobot, 2);
     }
 
     /**
-     * Check if kriteria is active for specific jurusan
+     * Get nilai range as string
      */
-    public function isActiveForJurusan($jurusanId)
+    public function getNilaiRangeAttribute()
     {
-        $kriteriaJurusan = $this->kriteriaJurusan()
-                                ->where('jurusan_id', $jurusanId)
-                                ->first();
-        
-        return $kriteriaJurusan ? $kriteriaJurusan->is_active : false;
+        return $this->nilai_min . ' - ' . $this->nilai_max;
+    }
+
+    /**
+     * Validate if a nilai is within range
+     */
+    public function isNilaiValid($nilai)
+    {
+        return $nilai >= $this->nilai_min && $nilai <= $this->nilai_max;
+    }
+
+    /**
+     * Get all active kriteria with their weights
+     */
+    public static function getActiveWithWeights()
+    {
+        return static::where('is_active', true)
+                    ->orderBy('kode_kriteria')
+                    ->get();
     }
 }

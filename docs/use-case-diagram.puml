@@ -1,0 +1,137 @@
+@startuml
+!theme plain
+title Use Case Diagram - Sistem PPDB SMK dengan Metode PROMETHEE
+
+' Actors
+actor "Admin" as admin
+actor "Panitia" as panitia  
+actor "Ketua Jurusan" as ketua_jurusan
+
+' System boundary
+rectangle "Sistem PPDB SMK" {
+    
+    ' Authentication Package
+    package "Authentication" {
+        usecase "Login" as UC1
+        usecase "Logout" as UC2
+        usecase "Manage Profile" as UC3
+        usecase "Change Password" as UC4
+    }
+    
+    ' Admin Package
+    package "Admin Management" {
+        usecase "Manage Dashboard" as UC5
+        usecase "Manage Jurusan" as UC6
+        usecase "Manage Master Kriteria" as UC7
+        usecase "Manage Kriteria Jurusan" as UC8
+        usecase "Manage Tahun Akademik" as UC9
+        usecase "Manage Users" as UC10
+        usecase "Monitor Selection Process" as UC11
+        usecase "View Final Results" as UC12
+        usecase "Generate Admin Reports" as UC13
+        usecase "Export System Data" as UC14
+    }
+    
+    ' Panitia Package
+    package "Panitia Management" {
+        usecase "Manage Siswa Data" as UC15
+        usecase "Import Siswa from Excel" as UC16
+        usecase "Export Siswa Data" as UC17
+        usecase "Input Nilai Individual" as UC18
+        usecase "Input Nilai Per Jurusan" as UC19
+        usecase "Bulk Input Nilai" as UC20
+        usecase "Run PROMETHEE Khusus" as UC21
+        usecase "Run PROMETHEE Umum" as UC22
+        usecase "Transfer Failed Khusus to Umum" as UC23
+        usecase "Generate Selection Reports" as UC24
+        usecase "Print Reports" as UC25
+        usecase "Export Reports to Excel/PDF" as UC26
+    }
+    
+    ' Ketua Jurusan Package
+    package "Validation Management" {
+        usecase "Validate Student Results" as UC27
+        usecase "Bulk Validation" as UC28
+        usecase "View Validation Reports" as UC29
+        usecase "Approve/Reject Students" as UC30
+    }
+    
+    ' Common Package
+    package "Common Functions" {
+        usecase "View Status Dashboard" as UC31
+        usecase "Monitor System Status" as UC32
+        usecase "View Selection Statistics" as UC33
+    }
+}
+
+' Admin relationships
+admin --> UC1
+admin --> UC2
+admin --> UC3
+admin --> UC4
+admin --> UC5
+admin --> UC6
+admin --> UC7
+admin --> UC8
+admin --> UC9
+admin --> UC10
+admin --> UC11
+admin --> UC12
+admin --> UC13
+admin --> UC14
+admin --> UC31
+admin --> UC32
+admin --> UC33
+
+' Panitia relationships
+panitia --> UC1
+panitia --> UC2
+panitia --> UC3
+panitia --> UC4
+panitia --> UC15
+panitia --> UC16
+panitia --> UC17
+panitia --> UC18
+panitia --> UC19
+panitia --> UC20
+panitia --> UC21
+panitia --> UC22
+panitia --> UC23
+panitia --> UC24
+panitia --> UC25
+panitia --> UC26
+panitia --> UC31
+panitia --> UC32
+panitia --> UC33
+
+' Ketua Jurusan relationships
+ketua_jurusan --> UC1
+ketua_jurusan --> UC2
+ketua_jurusan --> UC3
+ketua_jurusan --> UC4
+ketua_jurusan --> UC27
+ketua_jurusan --> UC28
+ketua_jurusan --> UC29
+ketua_jurusan --> UC30
+ketua_jurusan --> UC31
+ketua_jurusan --> UC32
+ketua_jurusan --> UC33
+
+' Include relationships
+UC21 ..> UC15 : <<include>>
+UC22 ..> UC15 : <<include>>
+UC21 ..> UC20 : <<include>>
+UC22 ..> UC20 : <<include>>
+UC23 ..> UC21 : <<include>>
+UC22 ..> UC27 : <<include>>
+
+' Extend relationships
+UC16 ..> UC15 : <<extend>>
+UC17 ..> UC15 : <<extend>>
+UC19 ..> UC18 : <<extend>>
+UC20 ..> UC18 : <<extend>>
+UC28 ..> UC27 : <<extend>>
+UC25 ..> UC24 : <<extend>>
+UC26 ..> UC24 : <<extend>>
+
+@enduml

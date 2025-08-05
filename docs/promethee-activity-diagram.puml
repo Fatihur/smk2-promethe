@@ -1,0 +1,71 @@
+@startuml
+!theme plain
+title Activity Diagram - Proses PROMETHEE dalam Sistem PPDB SMK
+
+|Panitia|
+start
+:Input Data Siswa;
+:Import/Input Nilai Kriteria;
+:Validasi Kelengkapan Data;
+
+if (Data Lengkap?) then (tidak)
+  :Perbaiki Data;
+  stop
+else (ya)
+endif
+
+:Set Kuota Kategori Khusus;
+:Jalankan PROMETHEE Khusus;
+:Generate Ranking Khusus;
+:Tentukan Status Kuota;
+
+|Ketua Jurusan|
+:Review Hasil Khusus;
+
+while (Ada siswa yang perlu validasi?) is (ya)
+  :Pilih Siswa;
+  if (Approve/Reject?) then (approve)
+    :Set Status = Approved;
+  else (reject)
+    :Set Status = Rejected;
+    :Pindahkan ke Kategori Umum;
+  endif
+endwhile (tidak)
+
+|Panitia|
+:Identifikasi Siswa Khusus Gagal;
+:Transfer ke Kategori Umum;
+
+if (Ada siswa yang ditransfer?) then (ya)
+  :Update Kategori Siswa;
+  :Update Pilihan Jurusan;
+else (tidak)
+endif
+
+:Jalankan PROMETHEE Umum;
+:Generate Ranking Final;
+
+|Admin|
+:Monitor Proses;
+:Generate Laporan;
+:Export Hasil;
+
+stop
+
+note right of "Jalankan PROMETHEE Khusus"
+  Algoritma PROMETHEE:
+  1. Build Decision Matrix
+  2. Calculate Preference Matrix
+  3. Calculate Outranking Flows
+  4. Calculate Net Flows
+  5. Generate Ranking
+end note
+
+note right of "Transfer ke Kategori Umum"
+  Business Rule:
+  - Siswa khusus yang tidak masuk kuota
+  - Siswa khusus yang di-reject ketua jurusan
+  - Otomatis pindah pilihan jurusan 2 ke 1
+end note
+
+@enduml

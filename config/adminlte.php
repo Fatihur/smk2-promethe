@@ -349,11 +349,7 @@ return [
             'icon' => 'fas fa-fw fa-users',
         ],
         ['header' => 'PROSES SELEKSI'],
-        [
-            'text' => 'Monitor Proses Seleksi',
-            'url'  => '#',
-            'icon' => 'fas fa-fw fa-eye',
-        ],
+
         [
             'text'    => 'Hasil & Laporan',
             'icon'    => 'fas fa-fw fa-chart-bar',
@@ -363,11 +359,7 @@ return [
                     'url'  => '#',
                     'icon' => 'fas fa-fw fa-trophy',
                 ],
-                [
-                    'text' => 'Laporan Statistik',
-                    'url'  => '#',
-                    'icon' => 'fas fa-fw fa-chart-pie',
-                ],
+
                 [
                     'text' => 'Export Data',
                     'url'  => '#',

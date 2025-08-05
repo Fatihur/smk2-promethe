@@ -100,19 +100,13 @@ class MenuService
                         'text' => 'Kelola Jurusan',
                         'route' => 'admin.jurusan.index',
                         'icon' => 'fas fa-fw fa-graduation-cap',
-                        'active' => ['admin.jurusan.*', 'admin.kriteria-jurusan.*'],
+                        'active' => ['admin.jurusan.*'],
                     ],
                     [
                         'text' => 'Master Kriteria',
                         'route' => 'admin.master-kriteria.index',
                         'icon' => 'fas fa-fw fa-list-ol',
                         'active' => ['admin.master-kriteria.*'],
-                    ],
-                    [
-                        'text' => 'Overview Kriteria',
-                        'route' => 'admin.kriteria-overview.index',
-                        'icon' => 'fas fa-fw fa-table',
-                        'active' => ['admin.kriteria-overview.*'],
                     ],
                     [
                         'text' => 'Tahun Akademik',
@@ -150,12 +144,7 @@ class MenuService
                         'icon' => 'fas fa-fw fa-users',
                         'active' => ['admin.selection-process.umum*'],
                     ],
-                    [
-                        'text' => 'Monitor Proses',
-                        'route' => 'admin.selection-process.monitor',
-                        'icon' => 'fas fa-fw fa-eye',
-                        'active' => ['admin.selection-process.monitor*'],
-                    ],
+
                 ],
             ],
 
@@ -170,12 +159,7 @@ class MenuService
                         'icon' => 'fas fa-fw fa-trophy',
                         'active' => ['admin.results.*'],
                     ],
-                    [
-                        'text' => 'Laporan Statistik',
-                        'route' => 'admin.reports.statistics',
-                        'icon' => 'fas fa-fw fa-chart-pie',
-                        'active' => ['admin.reports.statistics*'],
-                    ],
+
                     [
                         'text' => 'Export Data',
                         'route' => 'admin.reports.export',

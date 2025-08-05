@@ -33,32 +33,13 @@ class Jurusan extends Model
     }
 
     /**
-     * Get the master kriteria for the jurusan with their weights.
+     * Get all active master kriteria (global criteria, not per jurusan)
      */
-    public function masterKriterias()
+    public function getActiveKriteriasAttribute()
     {
-        return $this->belongsToMany(MasterKriteria::class, 'kriteria_jurusan')
-                    ->withPivot('bobot', 'is_active')
-                    ->withTimestamps();
-    }
-
-    /**
-     * Get the kriteria jurusan pivot records.
-     */
-    public function kriteriaJurusan()
-    {
-        return $this->hasMany(KriteriaJurusan::class);
-    }
-
-    /**
-     * Get active kriteria for the jurusan.
-     */
-    public function activeKriterias()
-    {
-        return $this->belongsToMany(MasterKriteria::class, 'kriteria_jurusan')
-                    ->withPivot('bobot', 'is_active')
-                    ->wherePivot('is_active', true)
-                    ->withTimestamps();
+        return MasterKriteria::where('is_active', true)
+                            ->orderBy('kode_kriteria')
+                            ->get();
     }
 
     /**

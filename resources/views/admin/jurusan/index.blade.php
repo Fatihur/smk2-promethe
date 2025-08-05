@@ -73,10 +73,7 @@
                                     <a href="{{ route('admin.jurusan.edit', $item) }}" class="btn btn-warning btn-sm" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{{ route('admin.kriteria-jurusan.index', $item) }}"
-                                       class="btn btn-success btn-sm" title="Kelola Kriteria">
-                                        <i class="fas fa-clipboard-list"></i>
-                                    </a>
+                                  
                                     <form action="{{ route('admin.jurusan.destroy', $item) }}" method="POST"
                                           style="display: inline;" onsubmit="return confirm('Yakin ingin menghapus jurusan ini?')">
                                         @csrf

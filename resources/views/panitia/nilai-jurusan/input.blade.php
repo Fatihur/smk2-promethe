@@ -73,65 +73,65 @@
                         </div>
                     @endif
 
-                    @foreach($kriteriaJurusan as $kj)
+                    @foreach($masterKriteria as $kriteria)
                         <div class="form-group">
-                            <label for="nilai_{{ $kj->master_kriteria_id }}">
-                                {{ $kj->masterKriteria->nama_kriteria }}
+                            <label for="nilai_{{ $kriteria->id }}">
+                                {{ $kriteria->nama_kriteria }}
                                 <span class="text-danger">*</span>
-                                <small class="text-muted">(Rentang: {{ $kj->nilai_min }} - {{ $kj->nilai_max }})</small>
+                                <small class="text-muted">(Rentang: {{ $kriteria->nilai_min }} - {{ $kriteria->nilai_max }})</small>
                             </label>
-                            
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="input-group">
-                                        <input type="number" 
-                                               class="form-control @error("nilai.{$kj->master_kriteria_id}") is-invalid @enderror" 
-                                               id="nilai_{{ $kj->master_kriteria_id }}" 
-                                               name="nilai[{{ $kj->master_kriteria_id }}]" 
-                                               value="{{ old("nilai.{$kj->master_kriteria_id}", isset($nilaiSiswa[$kj->master_kriteria_id]) ? $nilaiSiswa[$kj->master_kriteria_id]->nilai : '') }}" 
-                                               min="{{ $kj->nilai_min }}" 
-                                               max="{{ $kj->nilai_max }}" 
-                                               step="0.01" 
-                                               placeholder="{{ $kj->nilai_min }}-{{ $kj->nilai_max }}" 
+                                        <input type="number"
+                                               class="form-control @error("nilai.{$kriteria->id}") is-invalid @enderror"
+                                               id="nilai_{{ $kriteria->id }}"
+                                               name="nilai[{{ $kriteria->id }}]"
+                                               value="{{ old("nilai.{$kriteria->id}", isset($nilaiSiswa[$kriteria->id]) ? $nilaiSiswa[$kriteria->id]->nilai : '') }}"
+                                               min="{{ $kriteria->nilai_min }}"
+                                               max="{{ $kriteria->nilai_max }}"
+                                               step="0.01"
+                                               placeholder="{{ $kriteria->nilai_min }}-{{ $kriteria->nilai_max }}"
                                                required>
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="fas fa-star"></i>
                                             </span>
                                         </div>
-                                        @error("nilai.{$kj->master_kriteria_id}")
+                                        @error("nilai.{$kriteria->id}")
                                             <span class="invalid-feedback">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-8">
-                                    <input type="text" 
-                                           class="form-control @error("keterangan.{$kj->master_kriteria_id}") is-invalid @enderror" 
-                                           name="keterangan[{{ $kj->master_kriteria_id }}]" 
-                                           value="{{ old("keterangan.{$kj->master_kriteria_id}", isset($nilaiSiswa[$kj->master_kriteria_id]) ? $nilaiSiswa[$kj->master_kriteria_id]->keterangan : '') }}" 
+                                    <input type="text"
+                                           class="form-control @error("keterangan.{$kriteria->id}") is-invalid @enderror"
+                                           name="keterangan[{{ $kriteria->id }}]"
+                                           value="{{ old("keterangan.{$kriteria->id}", isset($nilaiSiswa[$kriteria->id]) ? $nilaiSiswa[$kriteria->id]->keterangan : '') }}"
                                            placeholder="Keterangan (opsional)">
-                                    @error("keterangan.{$kj->master_kriteria_id}")
+                                    @error("keterangan.{$kriteria->id}")
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
-                            
-                            @if($kj->masterKriteria->deskripsi)
-                                <small class="form-text text-muted">{{ $kj->masterKriteria->deskripsi }}</small>
+
+                            @if($kriteria->deskripsi)
+                                <small class="form-text text-muted">{{ $kriteria->deskripsi }}</small>
                             @endif
                         </div>
                     @endforeach
 
-                    @if($kriteriaJurusan->isEmpty())
+                    @if($masterKriteria->isEmpty())
                         <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle"></i>
-                            Belum ada kriteria penilaian yang aktif untuk jurusan ini. 
+                            Belum ada kriteria penilaian yang aktif untuk jurusan ini.
                             Hubungi administrator untuk menambahkan kriteria.
                         </div>
                     @endif
                 </div>
                 
-                @if($kriteriaJurusan->isNotEmpty())
+                @if($masterKriteria->isNotEmpty())
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Simpan Nilai
