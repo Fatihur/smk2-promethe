@@ -15,6 +15,12 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/logout', [LoginController::class, 'logout']);
 
+// Password Reset Routes
+Route::get('/password/reset', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/password/email', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
+
 
 
 // Protected Routes
@@ -72,8 +78,10 @@ Route::middleware(['auth'])->group(function () {
 
         // Tahun Akademik Management
         Route::resource('tahun-akademik', \App\Http\Controllers\Admin\TahunAkademikController::class);
-        Route::patch('tahun-akademik/{tahunAkademik}/set-active', [\App\Http\Controllers\Admin\TahunAkademikController::class, 'setActive'])
+        Route::patch('tahun-akademik/{tahun_akademik}/set-active', [\App\Http\Controllers\Admin\TahunAkademikController::class, 'setActive'])
             ->name('tahun-akademik.set-active');
+        Route::post('tahun-akademik/bulk-action', [\App\Http\Controllers\Admin\TahunAkademikController::class, 'bulkAction'])
+            ->name('tahun-akademik.bulk-action');
 
         // User Management
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class);

@@ -12,11 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Step 1: Add bobot, nilai_min, nilai_max to master_kriteria
+        // Step 1: Add bobot, nilai_min, nilai_max to master_kriteria (if they don't exist)
         Schema::table('master_kriteria', function (Blueprint $table) {
-            $table->decimal('bobot', 5, 2)->default(1.0)->after('tipe'); // Weight for PROMETHEE calculation
-            $table->decimal('nilai_min', 8, 2)->default(0)->after('bobot'); // Minimum value range
-            $table->decimal('nilai_max', 8, 2)->default(100)->after('nilai_min'); // Maximum value range
+            if (!Schema::hasColumn('master_kriteria', 'bobot')) {
+                $table->decimal('bobot', 5, 2)->default(1.0)->after('tipe'); // Weight for PROMETHEE calculation
+            }
+            if (!Schema::hasColumn('master_kriteria', 'nilai_min')) {
+                $table->decimal('nilai_min', 8, 2)->default(0)->after('bobot'); // Minimum value range
+            }
+            if (!Schema::hasColumn('master_kriteria', 'nilai_max')) {
+                $table->decimal('nilai_max', 8, 2)->default(100)->after('nilai_min'); // Maximum value range
+            }
         });
 
         // Step 2: Migrate existing data from kriteria_jurusan to master_kriteria

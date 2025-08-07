@@ -5,9 +5,7 @@
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <h1>Profil Saya</h1>
-        <a href="{{ route('profile.edit') }}" class="btn btn-primary">
-            <i class="fas fa-edit"></i> Edit Profil
-        </a>
+        
     </div>
 @stop
 
@@ -163,11 +161,15 @@
                     <a href="{{ route('profile.edit') }}" class="btn btn-primary btn-block">
                         <i class="fas fa-edit"></i> Edit Profil
                     </a>
-                    
+
                     <hr>
-                    
+
                     <button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#changePasswordModal">
                         <i class="fas fa-key"></i> Ubah Password
+                    </button>
+
+                    <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#forgotPasswordModal">
+                        <i class="fas fa-unlock-alt"></i> Lupa Password
                     </button>
                 </div>
             </div>
@@ -249,6 +251,58 @@
         </div>
     </div>
 </div>
+
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ route('password.email') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Lupa Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Informasi:</strong> Link reset password akan dikirim ke email Anda yang terdaftar.
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reset_email">Email Terdaftar</label>
+                        <input type="email"
+                               name="email"
+                               id="reset_email"
+                               class="form-control"
+                               value="{{ $user->email }}"
+                               readonly>
+                        <small class="form-text text-muted">
+                            Email ini tidak dapat diubah. Jika email salah, hubungi administrator.
+                        </small>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Perhatian:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Link reset password akan berlaku selama 60 menit</li>
+                            <li>Setelah reset, Anda akan logout otomatis</li>
+                            <li>Pastikan email Anda dapat menerima email dari sistem</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-paper-plane"></i> Kirim Link Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @stop
 
 @section('css')
@@ -271,6 +325,18 @@
 @if($errors->has('current_password') || $errors->has('password'))
     $(document).ready(function() {
         $('#changePasswordModal').modal('show');
+    });
+@endif
+
+@if($errors->has('email') && request()->route()->getName() === 'password.email')
+    $(document).ready(function() {
+        $('#forgotPasswordModal').modal('show');
+    });
+@endif
+
+@if(session('status'))
+    $(document).ready(function() {
+        toastr.success('{{ session('status') }}');
     });
 @endif
 </script>

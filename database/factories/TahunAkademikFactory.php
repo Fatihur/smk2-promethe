@@ -21,7 +21,7 @@ class TahunAkademikFactory extends Factory
     {
         return [
             'tahun' => $this->faker->year . '/' . ($this->faker->year + 1),
-            'semester' => $this->faker->randomElement(['Ganjil', 'Genap']),
+            'semester' => 'Ganjil',
             'is_active' => false,
             'tanggal_mulai' => $this->faker->date(),
             'tanggal_selesai' => $this->faker->date(),

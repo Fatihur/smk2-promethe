@@ -4,6 +4,10 @@
 
 @section('auth_header', 'SMK2 PROMETHEE')
 
+@section('adminlte_css_pre')
+    <link rel="stylesheet" href="{{ asset('css/auth-background.css') }}">
+@stop
+
 @section('auth_body')
 <form action="{{ route('login') }}" method="post">
     @csrf
@@ -56,6 +60,13 @@
         </div>
     </div>
 </form>
+
+{{-- Forgot password link --}}
+<p class="mb-1 text-center">
+    <a href="{{ route('password.request') }}" class="text-center">
+        <i class="fas fa-unlock-alt"></i> Lupa Password?
+    </a>
+</p>
 @stop
 
 @section('auth_footer')

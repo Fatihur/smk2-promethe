@@ -60,7 +60,7 @@
                     <select name="tahun_akademik_id" class="form-control">
                         @foreach($tahunAkademik as $tahun)
                             <option value="{{ $tahun->id }}" {{ request('tahun_akademik_id', $tahun->is_active ? $tahun->id : '') == $tahun->id ? 'selected' : '' }}>
-                                {{ $tahun->tahun }} - {{ $tahun->semester }}
+                                {{ $tahun->tahun }}
                             </option>
                         @endforeach
                     </select>

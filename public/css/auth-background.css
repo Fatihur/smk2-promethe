@@ -1,0 +1,152 @@
+/* 
+ * Auth Pages Background Styling
+ * SMK2 PROMETHEE - Login & Password Reset Pages
+ */
+
+/* Background overlay styling */
+body.login-page {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../bg.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+/* Login box styling with glassmorphism effect */
+.login-box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    margin-top: 50px;
+}
+
+/* Card styling */
+.card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.card-body {
+    background: transparent !important;
+}
+
+/* Header styling */
+.login-logo a {
+    color: #fff !important;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 2rem;
+}
+
+/* Form styling */
+.form-control {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Button styling */
+.btn-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+/* Input group styling */
+.input-group-text {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: none;
+}
+
+/* Text styling */
+.login-box-msg,
+p,
+p small {
+    color: #333 !important;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Link styling */
+a {
+    color: #007bff !important;
+    font-weight: 500;
+    text-decoration: none;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+a:hover {
+    color: #0056b3 !important;
+    text-decoration: underline;
+}
+
+/* Checkbox styling */
+.icheck-primary > input:first-child:checked + label::before {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Alert styling */
+.alert {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+}
+
+.alert-success {
+    background: rgba(212, 237, 218, 0.9);
+    border-color: rgba(195, 230, 203, 0.9);
+    color: #155724;
+}
+
+.alert-danger {
+    background: rgba(248, 215, 218, 0.9);
+    border-color: rgba(245, 198, 203, 0.9);
+    color: #721c24;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-box {
+        margin: 20px;
+        padding: 15px;
+    }
+    
+    body.login-page {
+        background-attachment: scroll;
+    }
+    
+    .login-logo a {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .login-box {
+        margin: 10px;
+        padding: 10px;
+    }
+    
+    .login-logo a {
+        font-size: 1.3rem;
+    }
+}

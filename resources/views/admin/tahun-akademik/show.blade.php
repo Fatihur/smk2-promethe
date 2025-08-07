@@ -14,7 +14,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Informasi Tahun Akademik</h3>
                         <div class="card-tools">
-                            <a href="{{ route('admin.tahun-akademik.edit', $tahunAkademik) }}" class="btn btn-warning btn-sm">
+                            <a href="{{ route('admin.tahun-akademik.edit', $tahun_akademik) }}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                             <a href="{{ route('admin.tahun-akademik.index') }}" class="btn btn-secondary btn-sm">
@@ -27,26 +27,26 @@
                             <div class="col-md-6">
                                 <strong>Tahun Akademik:</strong>
                                 <p class="text-muted">
-                                    {{ $tahunAkademik->tahun }}
-                                    @if($tahunAkademik->is_active)
+                                    {{ $tahun_akademik->tahun }}
+                                    @if($tahun_akademik->is_active)
                                         <span class="badge badge-success ml-1">Aktif</span>
                                     @endif
                                 </p>
                             </div>
                             <div class="col-md-6">
                                 <strong>Semester:</strong>
-                                <p class="text-muted">{{ $tahunAkademik->semester }}</p>
+                                <p class="text-muted">{{ $tahun_akademik->semester }}</p>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <strong>Tanggal Mulai:</strong>
-                                <p class="text-muted">{{ $tahunAkademik->tanggal_mulai->format('d F Y') }}</p>
+                                <p class="text-muted">{{ $tahun_akademik->tanggal_mulai->format('d F Y') }}</p>
                             </div>
                             <div class="col-md-6">
                                 <strong>Tanggal Selesai:</strong>
-                                <p class="text-muted">{{ $tahunAkademik->tanggal_selesai->format('d F Y') }}</p>
+                                <p class="text-muted">{{ $tahun_akademik->tanggal_selesai->format('d F Y') }}</p>
                             </div>
                         </div>
 
@@ -54,7 +54,7 @@
                             <div class="col-md-6">
                                 <strong>Status:</strong>
                                 <p class="text-muted">
-                                    @if($tahunAkademik->is_active)
+                                    @if($tahun_akademik->is_active)
                                         <span class="badge badge-success">Aktif</span>
                                     @else
                                         <span class="badge badge-secondary">Tidak Aktif</span>
@@ -64,7 +64,7 @@
                             <div class="col-md-6">
                                 <strong>Durasi:</strong>
                                 <p class="text-muted">
-                                    {{ $tahunAkademik->tanggal_mulai->diffInDays($tahunAkademik->tanggal_selesai) }} hari
+                                    {{ $tahun_akademik->tanggal_mulai->diffInDays($tahun_akademik->tanggal_selesai) }} hari
                                 </p>
                             </div>
                         </div>
@@ -72,17 +72,17 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <strong>Dibuat:</strong>
-                                <p class="text-muted">{{ $tahunAkademik->created_at->format('d F Y H:i') }}</p>
+                                <p class="text-muted">{{ $tahun_akademik->created_at->format('d F Y H:i') }}</p>
                             </div>
                             <div class="col-md-6">
                                 <strong>Terakhir Diupdate:</strong>
-                                <p class="text-muted">{{ $tahunAkademik->updated_at->format('d F Y H:i') }}</p>
+                                <p class="text-muted">{{ $tahun_akademik->updated_at->format('d F Y H:i') }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                @if($tahunAkademik->siswa->count() > 0)
+                @if($tahun_akademik->siswa->count() > 0)
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Data Siswa</h3>
@@ -99,7 +99,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($tahunAkademik->siswa->take(10) as $siswa)
+                                        @foreach($tahun_akademik->siswa->take(10) as $siswa)
                                             <tr>
                                                 <td>{{ $siswa->no_pendaftaran }}</td>
                                                 <td>{{ $siswa->nama_lengkap }}</td>
@@ -118,10 +118,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                            @if($tahunAkademik->siswa->count() > 10)
+                            @if($tahun_akademik->siswa->count() > 10)
                                 <p class="text-muted mt-2">
-                                    Menampilkan 10 dari {{ $tahunAkademik->siswa->count() }} siswa.
-                                    <a href="{{ route('panitia.siswa.index', ['tahun_akademik_id' => $tahunAkademik->id]) }}">
+                                    Menampilkan 10 dari {{ $tahun_akademik->siswa->count() }} siswa.
+                                    <a href="{{ route('panitia.siswa.index', ['tahun_akademik_id' => $tahun_akademik->id]) }}">
                                         Lihat semua siswa
                                     </a>
                                 </p>
@@ -141,7 +141,7 @@
                             <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Total Siswa</span>
-                                <span class="info-box-number">{{ $tahunAkademik->siswa->count() }}</span>
+                                <span class="info-box-number">{{ $tahun_akademik->siswa->count() }}</span>
                             </div>
                         </div>
 
@@ -149,7 +149,7 @@
                             <span class="info-box-icon bg-warning"><i class="fas fa-star"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Kategori Khusus</span>
-                                <span class="info-box-number">{{ $tahunAkademik->siswa->where('kategori', 'khusus')->count() }}</span>
+                                <span class="info-box-number">{{ $tahun_akademik->siswa->where('kategori', 'khusus')->count() }}</span>
                             </div>
                         </div>
 
@@ -157,7 +157,7 @@
                             <span class="info-box-icon bg-primary"><i class="fas fa-graduation-cap"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Kategori Umum</span>
-                                <span class="info-box-number">{{ $tahunAkademik->siswa->where('kategori', 'umum')->count() }}</span>
+                                <span class="info-box-number">{{ $tahun_akademik->siswa->where('kategori', 'umum')->count() }}</span>
                             </div>
                         </div>
 
@@ -165,19 +165,19 @@
                             <span class="info-box-icon bg-success"><i class="fas fa-check"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Diterima</span>
-                                <span class="info-box-number">{{ $tahunAkademik->siswa->where('status_seleksi', 'diterima')->count() }}</span>
+                                <span class="info-box-number">{{ $tahun_akademik->siswa->where('status_seleksi', 'diterima')->count() }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                @if(!$tahunAkademik->is_active)
+                @if(!$tahun_akademik->is_active)
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Aksi</h3>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('admin.tahun-akademik.set-active', $tahunAkademik) }}" method="POST">
+                            <form action="{{ route('admin.tahun-akademik.set-active', $tahun_akademik) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="btn btn-success btn-block" 

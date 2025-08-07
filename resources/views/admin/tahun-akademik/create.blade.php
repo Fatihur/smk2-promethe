@@ -8,6 +8,14 @@
 
 @section('content')
     <div class="container-fluid">
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h5><i class="icon fas fa-ban"></i> Error!</h5>
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Form Tambah Tahun Akademik</h3>
@@ -40,17 +48,13 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="semester">Semester <span class="text-danger">*</span></label>
-                                <select class="form-control @error('semester') is-invalid @enderror" 
-                                        id="semester" 
-                                        name="semester">
-                                    <option value="">Pilih Semester</option>
-                                    <option value="Ganjil" {{ old('semester') == 'Ganjil' ? 'selected' : '' }}>Ganjil</option>
-                                    <option value="Genap" {{ old('semester') == 'Genap' ? 'selected' : '' }}>Genap</option>
-                                </select>
-                                @error('semester')
-                                    <span class="invalid-feedback">{{ $message }}</span>
-                                @enderror
+                                <label for="semester_display">Semester</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="semester_display"
+                                       value="Ganjil"
+                                       readonly>
+                                <small class="form-text text-muted">Semester otomatis diatur ke Ganjil</small>
                             </div>
                         </div>
                     </div>
@@ -87,11 +91,13 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
+                                <!-- Hidden input to ensure is_active is always sent -->
+                                <input type="hidden" name="is_active" value="0">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" 
-                                           class="custom-control-input" 
-                                           id="is_active" 
-                                           name="is_active" 
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           id="is_active"
+                                           name="is_active"
                                            value="1"
                                            {{ old('is_active') ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="is_active">
@@ -129,18 +135,116 @@ $(document).ready(function() {
             value = value.substring(0, 4) + '/' + value.substring(4, 8);
         }
         $(this).val(value);
+
+        // Validate year format and sequence
+        if (value.length === 9) {
+            validateYearFormat(value);
+        }
     });
+
+    // Validate year format and sequence
+    function validateYearFormat(value) {
+        const yearPattern = /^\d{4}\/\d{4}$/;
+        const $tahunInput = $('#tahun');
+
+        if (!yearPattern.test(value)) {
+            showFieldError($tahunInput, 'Format harus YYYY/YYYY (contoh: 2024/2025)');
+            return false;
+        }
+
+        const years = value.split('/');
+        const startYear = parseInt(years[0]);
+        const endYear = parseInt(years[1]);
+
+        if (endYear !== startYear + 1) {
+            showFieldError($tahunInput, 'Tahun harus berurutan (contoh: 2024/2025)');
+            return false;
+        }
+
+        if (startYear < 2020 || startYear > 2050) {
+            showFieldError($tahunInput, 'Tahun harus dalam rentang 2020-2050');
+            return false;
+        }
+
+        clearFieldError($tahunInput);
+        return true;
+    }
+
+    // Show field error
+    function showFieldError($field, message) {
+        $field.addClass('is-invalid');
+        $field.siblings('.invalid-feedback').remove();
+        $field.after('<div class="invalid-feedback">' + message + '</div>');
+    }
+
+    // Clear field error
+    function clearFieldError($field) {
+        $field.removeClass('is-invalid');
+        $field.siblings('.invalid-feedback').remove();
+    }
 
     // Validate dates
     $('#tanggal_mulai, #tanggal_selesai').on('change', function() {
-        let startDate = $('#tanggal_mulai').val();
-        let endDate = $('#tanggal_selesai').val();
+        validateDates();
+    });
 
-        if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
-            alert('Tanggal selesai harus lebih besar dari tanggal mulai');
-            $('#tanggal_selesai').val('');
+    function validateDates() {
+        const startDate = $('#tanggal_mulai').val();
+        const endDate = $('#tanggal_selesai').val();
+        const $endDateInput = $('#tanggal_selesai');
+
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (start >= end) {
+                showFieldError($endDateInput, 'Tanggal selesai harus setelah tanggal mulai');
+                return false;
+            }
+
+            // Check if duration is reasonable (between 6 months and 2 years)
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 180) {
+                showFieldError($endDateInput, 'Durasi tahun akademik minimal 6 bulan');
+                return false;
+            }
+
+            if (diffDays > 730) {
+                showFieldError($endDateInput, 'Durasi tahun akademik maksimal 2 tahun');
+                return false;
+            }
+
+            clearFieldError($endDateInput);
+        }
+
+        return true;
+    }
+
+    // Form submission validation
+    $('form').on('submit', function(e) {
+        let isValid = true;
+
+        // Validate tahun
+        const tahunValue = $('#tahun').val();
+        if (tahunValue && !validateYearFormat(tahunValue)) {
+            isValid = false;
+        }
+
+        // Validate dates
+        if (!validateDates()) {
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+            toastr.error('Mohon perbaiki kesalahan pada form sebelum menyimpan.');
         }
     });
+
+    // Initialize tooltips
+    $('[data-toggle="tooltip"]').tooltip();
 });
 </script>
 @stop
