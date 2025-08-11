@@ -125,15 +125,50 @@ function exportData(type) {
         }
     });
 
-    // Simulate export process (replace with actual export endpoint)
+    // Build export URL
+    let exportUrl = '';
+    switch(type) {
+        case 'siswa':
+            exportUrl = '{{ route("admin.reports.export.siswa") }}';
+            break;
+        case 'hasil_seleksi':
+            exportUrl = '{{ route("admin.reports.export.hasil-seleksi") }}';
+            break;
+        case 'ranking':
+            exportUrl = '{{ route("admin.reports.export.ranking") }}';
+            break;
+        case 'statistik':
+            exportUrl = '{{ route("admin.reports.export.statistik") }}';
+            break;
+        default:
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Tipe export tidak valid.',
+                confirmButtonText: 'OK'
+            });
+            return;
+    }
+
+    // Create a temporary link and trigger download
+    const link = document.createElement('a');
+    link.href = exportUrl;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Close loading and show success
     setTimeout(() => {
         Swal.fire({
-            icon: 'info',
-            title: 'Fitur Dalam Pengembangan',
-            text: 'Fitur export ' + type + ' sedang dalam tahap pengembangan dan akan segera tersedia.',
-            confirmButtonText: 'OK'
+            icon: 'success',
+            title: 'Export Berhasil',
+            text: 'File sedang diunduh. Periksa folder download Anda.',
+            confirmButtonText: 'OK',
+            timer: 3000,
+            timerProgressBar: true
         });
-    }, 2000);
+    }, 1000);
 }
 </script>
 @stop

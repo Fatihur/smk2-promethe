@@ -139,10 +139,7 @@
                                     <a href="{{ route('panitia.siswa.edit', $item) }}" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{{ route('panitia.siswa.nilai.edit', $item) }}" class="btn btn-success btn-sm">
-                                        <i class="fas fa-clipboard-list"></i>
-                                    </a>
-                                    <form action="{{ route('panitia.siswa.destroy', $item) }}" method="POST" 
+                                    <form action="{{ route('panitia.siswa.destroy', $item) }}" method="POST"
                                           style="display: inline;" onsubmit="return confirm('Yakin ingin menghapus data siswa ini?')">
                                         @csrf
                                         @method('DELETE')

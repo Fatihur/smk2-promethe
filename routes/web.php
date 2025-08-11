@@ -99,8 +99,13 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::prefix('reports')->name('reports.')->group(function () {
-
             Route::get('export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('export');
+
+            // Export routes
+            Route::get('export/siswa', [\App\Http\Controllers\Admin\ReportController::class, 'exportSiswa'])->name('export.siswa');
+            Route::get('export/hasil-seleksi', [\App\Http\Controllers\Admin\ReportController::class, 'exportHasilSeleksi'])->name('export.hasil-seleksi');
+            Route::get('export/ranking', [\App\Http\Controllers\Admin\ReportController::class, 'exportRanking'])->name('export.ranking');
+            Route::get('export/statistik', [\App\Http\Controllers\Admin\ReportController::class, 'exportStatistik'])->name('export.statistik');
         });
     });
 
@@ -175,7 +180,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/print/daftar-lulus', [\App\Http\Controllers\Panitia\ReportController::class, 'printDaftarLulus'])->name('print.daftar-lulus');
 
             // Export routes
+            Route::get('/export/siswa', [\App\Http\Controllers\Panitia\SiswaController::class, 'export'])->name('export.siswa');
             Route::get('/export/hasil-seleksi', [\App\Http\Controllers\Panitia\ReportController::class, 'exportHasilSeleksi'])->name('export.hasil-seleksi');
+            Route::get('/export/ranking', [\App\Http\Controllers\Panitia\ReportController::class, 'exportRanking'])->name('export.ranking');
             Route::get('/export/statistik', [\App\Http\Controllers\Panitia\ReportController::class, 'exportStatistik'])->name('export.statistik');
         });
     });

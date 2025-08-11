@@ -11,7 +11,7 @@
  Target Server Version : 80040
  File Encoding         : 65001
 
- Date: 05/08/2025 10:51:52
+ Date: 07/08/2025 10:41:55
 */
 
 SET NAMES utf8mb4;
@@ -125,7 +125,7 @@ CREATE TABLE `jurusan`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `jurusan_kode_jurusan_unique`(`kode_jurusan` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of jurusan
@@ -162,7 +162,7 @@ CREATE TABLE `master_kriteria`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `master_kriteria_kode_kriteria_unique`(`kode_kriteria` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of master_kriteria
@@ -180,7 +180,7 @@ CREATE TABLE `migrations`  (
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of migrations
@@ -212,6 +212,8 @@ INSERT INTO `migrations` VALUES (24, '2025_08_01_100000_fix_nilai_siswa_unique_c
 INSERT INTO `migrations` VALUES (25, '2025_08_01_110000_add_missing_fields_to_siswa_table', 7);
 INSERT INTO `migrations` VALUES (26, '2025_08_02_fix_nilai_siswa_constraint', 8);
 INSERT INTO `migrations` VALUES (27, '2025_08_03_035435_remove_unnecessary_fields_from_siswa_and_drop_guru_table', 9);
+INSERT INTO `migrations` VALUES (28, '2025_08_07_000001_fix_tahun_akademik_constraint_immediate', 10);
+INSERT INTO `migrations` VALUES (29, '2025_08_07_100000_update_semester_to_ganjil_only', 11);
 
 -- ----------------------------
 -- Table structure for model_has_permissions
@@ -264,7 +266,7 @@ CREATE TABLE `nilai_siswa`  (
   INDEX `nilai_siswa_master_kriteria_id_foreign`(`master_kriteria_id` ASC) USING BTREE,
   CONSTRAINT `nilai_siswa_master_kriteria_id_foreign` FOREIGN KEY (`master_kriteria_id`) REFERENCES `master_kriteria` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `nilai_siswa_siswa_id_foreign` FOREIGN KEY (`siswa_id`) REFERENCES `siswa` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of nilai_siswa
@@ -284,6 +286,9 @@ CREATE TABLE `password_reset_tokens`  (
 -- ----------------------------
 -- Records of password_reset_tokens
 -- ----------------------------
+INSERT INTO `password_reset_tokens` VALUES ('admin@smk2sumbawa.sch.id', '$2y$12$goSYG5v0IYTiKR5EYq/Rr.95n/WLlx37cn2Afvcu2sz2jKP685sZS', '2025-08-07 02:16:39');
+INSERT INTO `password_reset_tokens` VALUES ('fatihur17@gmail.com', '$2y$12$P3rw.Lw/kvIcd9gr1jT5UOlO3kX7KiHpTIrF2dvo8T0CuaxKUvgHy', '2025-08-07 02:14:49');
+INSERT INTO `password_reset_tokens` VALUES ('fatihurroyyan1@gmail.com', '$2y$12$x9XDvPhDB2T2X9Jh9ej2OOnxbtE3oXKj.ndXGtmsKpYLjwvJP0vJ.', '2025-08-07 02:16:50');
 
 -- ----------------------------
 -- Table structure for permissions
@@ -330,7 +335,7 @@ CREATE TABLE `promethee_results`  (
   CONSTRAINT `promethee_results_siswa_id_foreign` FOREIGN KEY (`siswa_id`) REFERENCES `siswa` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `promethee_results_tahun_akademik_id_foreign` FOREIGN KEY (`tahun_akademik_id`) REFERENCES `tahun_akademik` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `promethee_results_validated_by_foreign` FOREIGN KEY (`validated_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2215 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2216 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of promethee_results
@@ -390,7 +395,7 @@ CREATE TABLE `selection_process_status`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `selection_process_status_tahun_akademik_id_unique`(`tahun_akademik_id` ASC) USING BTREE,
   CONSTRAINT `selection_process_status_tahun_akademik_id_foreign` FOREIGN KEY (`tahun_akademik_id`) REFERENCES `tahun_akademik` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of selection_process_status
@@ -415,7 +420,9 @@ CREATE TABLE `sessions`  (
 -- ----------------------------
 -- Records of sessions
 -- ----------------------------
-INSERT INTO `sessions` VALUES ('XMHEEPFDaAj3m8jsqaNUUoa9XdMxO0goNtrl0G6x', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiMUdwRlB2VkxlNzV1eElzbEExT1I1Y3lNaTBpMGYwRTJrZ0U4WnVIMCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTU6Imh0dHA6Ly9zbWsyLXByb21ldGhlLnRlc3QvcGFuaXRpYS9wcm9tZXRoZWUva2h1c3VzL2Zvcm0iO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1754223673);
+INSERT INTO `sessions` VALUES ('Ew34ppi5tZtr9tjxutkFd3PHrkUPXlLjvj8RQGE7', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.18.0 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiREhRdjNqM21iM2NzUUJNQkNGZXlqeVhnWjZiSFJJcXFlM1hDdW9EWCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly9zbWsyLXByb21ldGhlLnRlc3QvbG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1754527549);
+INSERT INTO `sessions` VALUES ('OQfQeR1sAcuPjtb1MrCjO3Iz20d0mIkguTZ4vIGA', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSXAxdzN4aVZkZk1CS0N0NHJ3S0txQUlyYjJIbVAzMHByN3E2a09xRSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly9zbWsyLXByb21ldGhlLnRlc3QvbG9naW4iO319', 1754534246);
+INSERT INTO `sessions` VALUES ('UXazpfML945vJj7Pcnt2xz1bmrNuSnqU1HhUh5EA', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Herd/1.18.0 Chrome/120.0.6099.291 Electron/28.2.5 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZ0Fxblh3eExrZHJwTW8zS2E4VVNhUXJmc2JrWEFXb1lEMWZKdlI4NyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mzk6Imh0dHA6Ly9zbWsyLXByb21ldGhlLnRlc3QvP2hlcmQ9cHJldmlldyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1754527549);
 
 -- ----------------------------
 -- Table structure for siswa
@@ -453,7 +460,7 @@ CREATE TABLE `siswa`  (
   CONSTRAINT `siswa_pilihan_jurusan_1_foreign` FOREIGN KEY (`pilihan_jurusan_1`) REFERENCES `jurusan` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `siswa_pilihan_jurusan_2_foreign` FOREIGN KEY (`pilihan_jurusan_2`) REFERENCES `jurusan` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `siswa_tahun_akademik_id_foreign` FOREIGN KEY (`tahun_akademik_id`) REFERENCES `tahun_akademik` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 797 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 798 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of siswa
@@ -927,20 +934,19 @@ DROP TABLE IF EXISTS `tahun_akademik`;
 CREATE TABLE `tahun_akademik`  (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `tahun` varchar(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `semester` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `semester` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Ganjil',
   `is_active` tinyint(1) NOT NULL DEFAULT 0,
   `tanggal_mulai` date NOT NULL,
   `tanggal_selesai` date NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `unique_active_year`(`is_active` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tahun_akademik
 -- ----------------------------
-INSERT INTO `tahun_akademik` VALUES (1, '2024/2025', 'Ganjil', 1, '2024-07-01', '2025-06-30', '2025-07-31 06:16:30', '2025-07-31 06:16:30');
+INSERT INTO `tahun_akademik` VALUES (1, '2024/2025', 'Ganjil', 1, '2024-07-02', '2025-06-30', '2025-07-31 06:16:30', '2025-08-07 02:34:58');
 
 -- ----------------------------
 -- Table structure for users
@@ -964,15 +970,15 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `users_email_unique`(`email` ASC) USING BTREE,
   INDEX `users_jurusan_id_foreign`(`jurusan_id` ASC) USING BTREE,
   CONSTRAINT `users_jurusan_id_foreign` FOREIGN KEY (`jurusan_id`) REFERENCES `jurusan` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'Administrator', 'admin', 'admin@smk2sumbawa.sch.id', NULL, '$2y$12$ocYnEVEj/8DxxhcK7q2u5Oc77US.muOEidHpMxviXc1thJrzvmZPq', 'admin', NULL, 1, NULL, '2025-07-31 06:16:30', '2025-07-31 06:16:30');
-INSERT INTO `users` VALUES (2, 'Panitia PPDB', 'panitia', 'panitia@smk2sumbawa.sch.id', NULL, '$2y$12$atymUG29F7Igw/5c4pS5UO6GUeXbkHhCoStzRORdSmO6SR5T4xnJ.', 'panitia', NULL, 1, 'og75HvAhcCeWdlrJZXuUJK4h0iiYDeAF6SPgs64Nhe4z4PwZs3zFOqxtWjSt', '2025-07-31 06:16:31', '2025-07-31 06:16:31');
+INSERT INTO `users` VALUES (1, 'RAHMAWATILLAH', 'admin', 'admin@smk2sumbawa.sch.id', NULL, '$2y$12$ocYnEVEj/8DxxhcK7q2u5Oc77US.muOEidHpMxviXc1thJrzvmZPq', 'admin', NULL, 1, NULL, '2025-07-31 06:16:30', '2025-08-07 01:59:03');
+INSERT INTO `users` VALUES (2, 'Panitia PPDB', 'panitia', 'panitia@smk2sumbawa.sch.id', NULL, '$2y$12$atymUG29F7Igw/5c4pS5UO6GUeXbkHhCoStzRORdSmO6SR5T4xnJ.', 'panitia', NULL, 1, 'h9WihDTXh7joQdGrnnoiGWUAXVeZBsWyolhoDKT3OP44J0RXhdildRsf7x7q', '2025-07-31 06:16:31', '2025-07-31 06:16:31');
 INSERT INTO `users` VALUES (3, 'fatih', 'fatih', 'fatihur17@gmail.com', NULL, '$2y$12$9DtoMk1bsKBGxSPZG/Z9nO0TRwZSZ86EYU6lPyv0F/OIVZmFYcMlm', 'ketua_jurusan', 20, 1, NULL, '2025-08-01 01:45:15', '2025-08-03 04:21:16');
 INSERT INTO `users` VALUES (4, 'wati', 'wati', 'wati@gmail.com', NULL, '$2y$12$sPo0mJZ7pkgCi/YK452dWObAijuqE.QNEGQKjAbhJ.0F9rwValSSu', 'ketua_jurusan', 22, 1, NULL, '2025-08-02 11:56:59', '2025-08-03 04:52:55');
-INSERT INTO `users` VALUES (5, 'andi', 'andi', 'fatihur@gmail.com', NULL, '$2y$12$g6fkG4yOYAQUusnnEc0ts.OQPFkZn8jba9/bpXf87fDEt0TW47X2.', 'ketua_jurusan', 19, 1, NULL, '2025-08-03 04:54:20', '2025-08-03 04:54:20');
+INSERT INTO `users` VALUES (5, 'andi', 'andi', 'fatihurroyyan1@gmail.com', NULL, '$2y$12$g6fkG4yOYAQUusnnEc0ts.OQPFkZn8jba9/bpXf87fDEt0TW47X2.', 'ketua_jurusan', 19, 1, NULL, '2025-08-03 04:54:20', '2025-08-07 02:16:18');
 
 SET FOREIGN_KEY_CHECKS = 1;
